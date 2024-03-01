@@ -1,9 +1,12 @@
+mod app_data;
+mod errors;
+mod routes;
+
 use crate::app_data::AppData;
 use axum::{routing::get, Router};
+use routes::root;
 use std::{env, sync::Arc};
 use tokio::net::TcpListener;
-
-mod app_data;
 
 #[tokio::main]
 async fn main() {
@@ -18,8 +21,4 @@ async fn main() {
         .unwrap();
 
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn root() -> &'static str {
-    "Hello, World!"
 }
