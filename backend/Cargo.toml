@@ -7,9 +7,13 @@ edition = "2021"
 
 [dependencies]
 dotenvy = "*"
+clap = { version = "*", features = ["unstable-doc", "derive"] }
 tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
 axum = { version = "*", features = ["multipart"] }
+pingora-proxy = "*"
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
 
+# async-trait = "*"
+# pingora-proxy = { version = "*", features = ["lb"] }
 # reqwest = { version = "*", features = ["multipart", "blocking", "json"] }
