@@ -19,33 +19,19 @@ impl ProxyHttp for LB {
 
         println!("upstream peer is: {upstream:?}");
 
-        // Set SNI to one.one.one.one
-        let peer = Box::new(HttpPeer::new(upstream, true, "one.one.one.one".to_string()));
+        let peer = Box::new(HttpPeer::new(upstream, false, "0.0.0.0".to_string()));
         Ok(peer)
-    }
-
-    async fn upstream_request_filter(
-        &self,
-        _session: &mut Session,
-        upstream_request: &mut RequestHeader,
-        _ctx: &mut Self::CTX,
-    ) -> Result<()> {
-        upstream_request
-            .insert_header("Host", "0.0.0.0:8081")
-            .unwrap();
-
-        Ok(())
     }
 }
 
 fn main() {
     dotenvy::dotenv().unwrap();
 
-    let mut my_server = Server::new(None).unwrap();
+    let mut my_server = Server::new(Some(Opt::default())).unwrap();
     my_server.bootstrap();
 
     // Note that upstreams needs to be declared as `mut` now
-    let mut upstreams = LoadBalancer::try_from_iter(["0.0.0.0:8081"]).unwrap();
+    let mut upstreams = LoadBalancer::try_from_iter(["0.0.0.0:8081", "0.0.0.0:8082"]).unwrap();
 
     let hc = TcpHealthCheck::new();
     upstreams.set_health_check(hc);
