@@ -11,9 +11,9 @@ clap = { version = "*", features = ["cargo"] }
 tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
 axum = { version = "*", features = ["multipart"] }
 pingora-proxy = "*"
+pingora = { version = "*", features = ["lb"] }
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
+async-trait = "*"
 
-# async-trait = "*"
-# pingora-proxy = { version = "*", features = ["lb"] }
 # reqwest = { version = "*", features = ["multipart", "blocking", "json"] }

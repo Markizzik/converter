@@ -4,7 +4,7 @@ mod routes;
 
 use crate::app_data::AppData;
 use axum::{routing::get, Router};
-use clap::{command, Arg};
+use clap::{command, value_parser, Arg};
 use routes::root;
 use std::{env, sync::Arc};
 use tokio::net::TcpListener;
@@ -12,7 +12,12 @@ use tokio::net::TcpListener;
 #[tokio::main]
 async fn main() {
     let match_result = command!()
-        .arg(Arg::new("server_port").short('p'))
+        .arg(
+            Arg::new("server_port")
+                .short('p')
+                .long("server_port")
+                .value_parser(value_parser!(u16)),
+        )
         .get_matches();
 
     dotenvy::dotenv().unwrap();
