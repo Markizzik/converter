@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 dotenvy = "*"
-clap = { version = "*", features = ["unstable-doc", "derive"] }
+clap = { version = "*", features = ["cargo"] }
 tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
 axum = { version = "*", features = ["multipart"] }
 pingora-proxy = "*"
