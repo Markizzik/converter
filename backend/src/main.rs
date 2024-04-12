@@ -3,9 +3,13 @@ mod errors;
 mod routes;
 
 use crate::app_data::AppData;
-use axum::{routing::get, Router};
+use axum::{
+    extract::DefaultBodyLimit,
+    routing::{get, post},
+    Router,
+};
 use clap::{command, value_parser, Arg};
-use routes::root;
+use routes::{file_handler, root};
 use std::{env, sync::Arc};
 use tokio::net::TcpListener;
 
@@ -24,7 +28,11 @@ async fn main() {
 
     let app_data = Arc::new(AppData::new());
 
-    let app = Router::new().route("/", get(root)).with_state(app_data);
+    let app = Router::new()
+        .route("/", get(root))
+        .route("/convert", post(file_handler))
+        // .layer(DefaultBodyLimit::max(1024))
+        .with_state(app_data);
 
     let server_port: &u16 = match_result.get_one("server_port").unwrap();
     let listener = TcpListener::bind(&format!("0.0.0.0:{server_port}"))

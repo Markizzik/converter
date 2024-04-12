@@ -4,9 +4,10 @@ use axum::{
     http::StatusCode,
 };
 use std::sync::Arc;
+use tokio::net::unix::pipe::OpenOptions;
 
 pub async fn root() -> &'static str {
-    "Hello, World!"
+    "Hello!"
 }
 
 pub async fn file_handler(
@@ -21,15 +22,15 @@ pub async fn file_handler(
                 continue;
             };
 
-            // let input_file_path = format!("./{}/{file_name}", app_data.temp_folder);
+            let input_file_path = format!("./{}/{file_name}", app_data.temp_folder);
 
-            // let mut file = OpenOptions::new()
-            //     .read(true)
-            //     .write(true)
-            //     .create(true)
-            //     .open(&input_file_path)
-            //     .await
-            //     .unwrap();
+            let mut file = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .create(true)
+                .open(&input_file_path)
+                .await
+                .unwrap();
 
             // file.write_all(&file_bytes).await.unwrap();
 
