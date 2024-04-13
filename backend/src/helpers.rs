@@ -8,6 +8,11 @@ use tokio::process::Command;
 const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const STR_LEN: usize = 16;
 
+#[derive(Deserialize)]
+pub struct ConvertQuery {
+    pub new_file_format: String,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ImageFileFormat {
     Jpeg,
@@ -120,10 +125,23 @@ pub async fn ffmpeg_convert(input_file_path: &str, output_file_path: &str) -> Re
 }
 
 pub async fn rm_file(file_path: &str) -> Result<(), AppErr> {
-    dbg!(file_path);
-
     Command::new("rm")
         .arg(file_path)
+        .status()
+        .await
+        .map_err(|e| {
+            AppErr::new(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("err while spawn rm task: {e}"),
+            )
+        })?;
+
+    Ok(())
+}
+
+pub async fn rm_dir(dir: &str) -> Result<(), AppErr> {
+    Command::new("rm")
+        .args(vec!["-r", dir])
         .status()
         .await
         .map_err(|e| {

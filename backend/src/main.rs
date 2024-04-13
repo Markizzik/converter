@@ -10,7 +10,7 @@ use axum::{
     Router,
 };
 use clap::{command, value_parser, Arg};
-use routes::{file_handler, root};
+use routes::{file_handler, ping};
 use std::{env, sync::Arc};
 use tokio::net::TcpListener;
 
@@ -29,8 +29,17 @@ async fn main() {
 
     let app_data = Arc::new(AppData::new());
 
+    tokio::fs::remove_dir(&app_data.temp_folder).await.ok();
+    tokio::fs::create_dir(&app_data.temp_folder).await.unwrap();
+    tokio::fs::remove_dir(&app_data.converted_files_folder)
+        .await
+        .ok();
+    tokio::fs::create_dir(&app_data.converted_files_folder)
+        .await
+        .unwrap();
+
     let app = Router::new()
-        .route("/", get(root))
+        .route("/ping", get(ping))
         .route("/convert", post(file_handler))
         // .layer(DefaultBodyLimit::max(1024))
         .with_state(app_data);

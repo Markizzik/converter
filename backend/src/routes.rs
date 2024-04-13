@@ -1,24 +1,26 @@
 use crate::{
     app_data::AppData,
     errors::AppErr,
-    helpers::{ffmpeg_convert, gen_random_string, rm_file, FileFormat},
+    helpers::{ffmpeg_convert, gen_random_string, rm_dir, ConvertQuery},
 };
 use axum::{
-    extract::{Multipart, State},
-    http::{HeaderMap, StatusCode},
+    extract::{Multipart, Query, State},
+    http::StatusCode,
 };
-use std::sync::Arc;
+use std::{path::Path, sync::Arc};
 use tokio::{fs::File, io::AsyncWriteExt};
 
-pub async fn root() -> &'static str {
-    "Hello!"
+pub async fn ping() -> &'static str {
+    "pong"
 }
 
 pub async fn file_handler(
     State(app_data): State<Arc<AppData>>,
+    Query(ConvertQuery { new_file_format }): Query<ConvertQuery>,
     mut multipart: Multipart,
 ) -> Result<String, AppErr> {
     let temp_folder = &app_data.temp_folder;
+    let converted_files_folder = &app_data.converted_files_folder;
 
     while let Ok(Some(field)) = multipart.next_field().await {
         let field_name = field.name().unwrap();
@@ -29,28 +31,7 @@ pub async fn file_handler(
 
         let file_name = field.file_name().unwrap().to_string();
 
-        let headers = field.headers();
-
-        let Some(new_file_format) = headers.get("new_file_format") else {
-            return Err(AppErr::new(
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "no new file format found",
-            ));
-        };
-
-        let Ok(new_file_format) = new_file_format.to_str() else {
-            return Err(AppErr::new(
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "parse new file format error",
-            ));
-        };
-
         let rnd_string = gen_random_string();
-
-        let output_file_path =
-            format!("./{temp_folder}/{rnd_string}/{file_name}.{new_file_format}");
-
-        let new_file_download_link = format!("{rnd_string}/{file_name}.{new_file_format}");
 
         let Ok(file_bytes) = field.bytes().await else {
             return Err(AppErr::new(
@@ -59,18 +40,32 @@ pub async fn file_handler(
             ));
         };
 
-        let input_file_path = format!("./{}/{file_name}", app_data.temp_folder);
+        let file_name_without_extension =
+            Path::new(&file_name).file_stem().unwrap().to_str().unwrap();
 
+        let download_folder = format!("{temp_folder}/{rnd_string}");
+        let input_file_path = format!("{download_folder}/{file_name}");
+
+        let output_folder = format!("{converted_files_folder}/{rnd_string}");
+        let output_file_path =
+            format!("{output_folder}/{file_name_without_extension}.{new_file_format}");
+
+        tokio::fs::create_dir(&download_folder).await.unwrap();
         let mut file = File::create(&input_file_path).await.unwrap();
 
         file.write_all(&file_bytes).await.unwrap();
 
-        ffmpeg_convert(&input_file_path, &output_file_path).await?;
+        ffmpeg_convert(&input_file_path, &output_file_path)
+            .await
+            .unwrap();
 
-        rm_file(&input_file_path).await?;
+        // rm_dir(&download_folder).await.unwrap();
 
-        return Ok(new_file_download_link);
+        return Ok(output_file_path);
     }
 
-    Err(AppErr::new(StatusCode::INTERNAL_SERVER_ERROR, ""))
+    Err(AppErr::new(
+        StatusCode::INTERNAL_SERVER_ERROR,
+        "file convert error",
+    ))
 }
