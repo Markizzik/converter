@@ -8,7 +8,8 @@ edition = "2021"
 [dependencies]
 dotenvy = "*"
 clap = { version = "*", features = ["cargo"] }
-tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "*", features = ["full"] }
+rand = "*"
 axum = { version = "*", features = ["multipart"] }
 async-trait = "*"
 serde = { version = "*", features = ["derive"] }
