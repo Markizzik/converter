@@ -3,11 +3,7 @@ use axum::{extract::multipart::Field, http::StatusCode};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::{path::Path, str::FromStr};
-use tokio::{
-    fs::{read_dir, File},
-    io::AsyncWriteExt,
-    process::Command,
-};
+use tokio::{fs::File, io::AsyncWriteExt, process::Command};
 
 const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const STR_LEN: usize = 20;
@@ -181,30 +177,30 @@ pub fn gen_random_string() -> String {
     rand_str
 }
 
-pub async fn ext_by_name(path: &str, file_name: &str) -> Result<String, AppErr> {
-    let mut dir = read_dir(path).await.map_err(|e| {
-        AppErr::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("error while read dir: {e}"),
-        )
-    })?;
+// pub async fn ext_by_name(path: &str, file_name: &str) -> Result<String, AppErr> {
+//     let mut dir = read_dir(path).await.map_err(|e| {
+//         AppErr::new(
+//             StatusCode::INTERNAL_SERVER_ERROR,
+//             format!("error while read dir: {e}"),
+//         )
+//     })?;
 
-    while let Ok(Some(file)) = dir.next_entry().await {
-        let p = file.path().to_string_lossy().into_owned();
-        if p.contains(file_name) {
-            return Ok(file
-                .path()
-                .extension()
-                .ok_or_else(|| {
-                    AppErr::new(StatusCode::INTERNAL_SERVER_ERROR, "error while read ext")
-                })?
-                .to_string_lossy()
-                .into_owned());
-        }
-    }
+//     while let Ok(Some(file)) = dir.next_entry().await {
+//         let p = file.path().to_string_lossy().into_owned();
+//         if p.contains(file_name) {
+//             return Ok(file
+//                 .path()
+//                 .extension()
+//                 .ok_or_else(|| {
+//                     AppErr::new(StatusCode::INTERNAL_SERVER_ERROR, "error while read ext")
+//                 })?
+//                 .to_string_lossy()
+//                 .into_owned());
+//         }
+//     }
 
-    Err(AppErr::new(StatusCode::INTERNAL_SERVER_ERROR, "no file"))
-}
+//     Err(AppErr::new(StatusCode::INTERNAL_SERVER_ERROR, "no file"))
+// }
 
 pub async fn ffmpeg_convert(input_file_path: &str, output_file_path: &str) -> Result<(), AppErr> {
     Command::new("ffmpeg")
@@ -230,6 +226,24 @@ pub async fn ffmpeg_convert(input_file_path: &str, output_file_path: &str) -> Re
     Ok(())
 }
 
+pub async fn documents_convert(
+    input_file_path: &str,
+    output_file_path: &str,
+) -> Result<(), AppErr> {
+    Command::new("pandoc")
+        .args(vec!["-f", &input_file_path, "-t", &output_file_path])
+        .status()
+        .await
+        .map_err(|e| {
+            AppErr::new(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("err while spawn pandoc task: {e}"),
+            )
+        })?;
+
+    Ok(())
+}
+
 pub async fn rm_file(file_path: &str) -> Result<(), AppErr> {
     Command::new("rm")
         .arg(file_path)
@@ -245,20 +259,20 @@ pub async fn rm_file(file_path: &str) -> Result<(), AppErr> {
     Ok(())
 }
 
-pub async fn rm_dir(dir: &str) -> Result<(), AppErr> {
-    Command::new("rm")
-        .args(vec!["-r", dir])
-        .status()
-        .await
-        .map_err(|e| {
-            AppErr::new(
-                StatusCode::INTERNAL_SERVER_ERROR,
-                format!("err while spawn rm task: {e}"),
-            )
-        })?;
+// pub async fn rm_dir(dir: &str) -> Result<(), AppErr> {
+//     Command::new("rm")
+//         .args(vec!["-r", dir])
+//         .status()
+//         .await
+//         .map_err(|e| {
+//             AppErr::new(
+//                 StatusCode::INTERNAL_SERVER_ERROR,
+//                 format!("err while spawn rm task: {e}"),
+//             )
+//         })?;
 
-    Ok(())
-}
+//     Ok(())
+// }
 
 pub fn can_convert(new_file_format: &str, file_extension: &str) -> Result<(), AppErr> {
     if new_file_format.to_lowercase() == file_extension.to_lowercase() {
@@ -314,7 +328,7 @@ pub async fn convert(
             ffmpeg_convert(&input_file_path, &output_file_path).await?;
         }
         FileFormat::Compression(f) => compress(&input_file_path, &output_file_path, f).await?,
-        FileFormat::Document(_f) => todo!(),
+        FileFormat::Document(_) => documents_convert(&input_file_path, &output_file_path).await?,
     }
 
     rm_file(&input_file_path).await.unwrap();
