@@ -3,7 +3,11 @@ use axum::{extract::multipart::Field, http::StatusCode};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::{path::Path, str::FromStr};
-use tokio::{fs::File, io::AsyncWriteExt, process::Command};
+use tokio::{
+    fs::{remove_file, File},
+    io::AsyncWriteExt,
+    process::Command,
+};
 
 const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const STR_LEN: usize = 20;
@@ -245,16 +249,12 @@ pub async fn documents_convert(
 }
 
 pub async fn rm_file(file_path: &str) -> Result<(), AppErr> {
-    Command::new("rm")
-        .arg(file_path)
-        .status()
-        .await
-        .map_err(|e| {
-            AppErr::new(
-                StatusCode::INTERNAL_SERVER_ERROR,
-                format!("err while spawn rm task: {e}"),
-            )
-        })?;
+    remove_file(file_path).await.map_err(|e| {
+        AppErr::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("err while spawn rm task: {e}"),
+        )
+    })?;
 
     Ok(())
 }
