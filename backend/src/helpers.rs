@@ -29,7 +29,7 @@ impl FromStr for ImageFileFormat {
 
         match s.as_str() {
             "gif" => Ok(Self::Gif),
-            "jpeg" => Ok(Self::Jpeg),
+            "jpeg" | "jpg" => Ok(Self::Jpeg),
             "png" => Ok(Self::Png),
             "svg" => Ok(Self::Svg),
             _ => Err(()),
@@ -320,7 +320,6 @@ pub async fn convert(
 
     file.write_all(&file_bytes).await.unwrap();
 
-    // разные конвертации
     let file_format = FileFormat::from_str(new_file_format).unwrap();
 
     match file_format {
