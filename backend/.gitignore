@@ -1,4 +1,5 @@
 /target
 /temp
 /converted_files
+/public
 .DS_Store
