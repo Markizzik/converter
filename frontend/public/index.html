@@ -22,15 +22,18 @@
             Группа №6 | Проектный практикум 2024 г.
           </p>
         </div>
-        <div class="body">
-          <p class="kliknite-ili-peretaschite-fajly-sjuda">
-            Кликните или перетащите файлы сюда
-          </p>
-          <img
-            alt=""
-            class="download-icon"
-            src="https://static.overlay-tech.com/assets/8d1ae932-a675-43ac-9102-a1943f14c5aa.png"
-          />
+        <div class="body" onclick="document.getElementById('fileInput').click();">
+          <label for="fileInput" class="kliknite-ili-peretaschite-fajly-sjuda">
+            <p class="kliknite-ili-peretaschite-fajly-sjuda">
+              Кликните или перетащите файлы сюда
+            </p>
+            <img
+              alt=""
+              class="download-icon"
+              src="https://static.overlay-tech.com/assets/8d1ae932-a675-43ac-9102-a1943f14c5aa.png"
+            />
+          </label>
+          <input type="file" id="fileInput" accept=".jpg, .jpeg, .png, .gif, .bmp, .webp, .ico, .tif, .tiff, .svg, .raw, .tga" />
         </div>
         <div class="up-middle">
           <div class="flex-wrapper-one">
@@ -47,14 +50,16 @@
           <p class="konverter-fajlov">Конвертер файлов</p>
         </div>
         <div class="header"></div>
-        <div class="git-hub-button">
-          <p class="git-hub-project">GitHub Project</p>
-          <img
-            alt=""
-            class="github-mark-white-1"
-            src="https://static.overlay-tech.com/assets/f0f6441c-bbd4-464f-ad78-5f821be9a39d.png"
-          />
-        </div>
+        <button onclick="window.location.href = 'https://github.com/backtrac3r/converter';">
+          <div class="git-hub-button">
+            <p class="git-hub-project">GitHub Project</p>
+            <img
+              alt=""
+              class="github-mark-white-1"
+              src="https://static.overlay-tech.com/assets/f0f6441c-bbd4-464f-ad78-5f821be9a39d.png"
+            />
+          </div>
+        </button>  
         <div class="logo">
           <img
             alt=""
