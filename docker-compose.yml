@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      FLASK_ENV: development
+    command: python app.py
+
+  frontend:
+    build: ./templates
+    ports:
+      - "80:80"
+    depends_on:
+      - web
