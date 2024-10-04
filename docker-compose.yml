@@ -20,7 +20,7 @@ services:
     volumes:
       - ./static:/usr/share/nginx/html/static
       - ./templates:/usr/share/nginx/html/templates
-      - ./index.html:/usr/share/nginx/html/html.html
+      - ./index.html:/usr/share/nginx/html/index.html
       - ./favicon.ico:/usr/share/nginx/html/favicon.ico
     depends_on:
       - web

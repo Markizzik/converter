@@ -142,10 +142,9 @@ legend {
   margin: auto;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Теперь элементы будут начинаться сверху */
+  align-items: flex-start;
 }
 
-/* Центрирование контейнера и отступ сверху */
 .container {
   display: flex;
   flex-direction: column;
@@ -153,7 +152,7 @@ legend {
   align-items: center;
   text-align: center;
   position: relative;
-  margin-top: 380px; /* Увеличен отступ сверху */
+  margin-top: 380px;
   font-family: var(--roboto-condensed-22-regular-family);
     font-size: var(--roboto-condensed-22-regular-size);
     font-weight: var(--roboto-condensed-22-regular-weight);
@@ -161,7 +160,6 @@ legend {
     margin-bottom: 10px;
 }
 
-/* Стиль для кнопки выбора файла */
 .file-upload button {
   padding: 10px 20px;
   background-color: rgba(65, 55, 88, 1);
@@ -176,7 +174,6 @@ legend {
   background-color: rgba(93, 95, 142, 1);
 }
 
-/* Стиль для списка форматов */
 .format-selection {
   margin-bottom: 20px;
 }
@@ -189,7 +186,6 @@ legend {
   border: none;
 }
 
-/* Стиль для кнопки конвертации */
 .convert-button button {
   padding: 10px 20px;
   background-color: rgba(65, 55, 88, 1);
@@ -203,7 +199,6 @@ legend {
   background-color: rgba(93, 95, 142, 1);
 }
 
-/* Центрирование и фиксация для элемента .bg-1 */
 .bg-1 {
   width: 1920px;
   height: 1080px;
@@ -215,7 +210,6 @@ legend {
   margin: 0;
 }
 
-/* Остальные стили */
 .bottom {
   display: flex;
   flex-direction: column;

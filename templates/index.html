@@ -26,13 +26,11 @@
           </p>
         </div>
         <div class="container">
-          <!-- Кнопка для выбора файла -->
           <div class="file-upload">
               <input type="file" id="fileInput" name="file" accept=".jpg, .jpeg, .png, .gif, .bmp, .tif, .tiff, .webp, .ico, .raw, .tga" onchange="handleFileSelection(event)" style="display: none;">
               <button onclick="document.getElementById('fileInput').click()">Выберите файл</button>
           </div>
   
-          <!-- Список для выбора формата -->
           <div class="format-selection">
               <label for="convertFormat">Конвертировать в:</label>
               <select id="convertFormat">
@@ -43,7 +41,6 @@
               </select>
           </div>
   
-          <!-- Кнопка для конвертации -->
           <div class="convert-button">
               <button onclick="startConversion()">Конвертировать</button>
           </div>
@@ -108,7 +105,7 @@
           </div>
 
         <div class="header"></div>
-        <button onclick="window.location.href = 'https://github.com/backtrac3r/converter';">
+        <button onclick="window.location.href = 'https://github.com/Markizzik/converter';">
           <div class="git-hub-button">
             <p class="git-hub-project">GitHub Project</p>
             <img
