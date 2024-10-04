@@ -3,17 +3,24 @@ version: '3.9'
 services:
   web:
     build: .
-    ports:
-      - "5000:5000"
     volumes:
       - .:/app
+    ports:
+      - "5000:5000"
     environment:
       FLASK_ENV: development
     command: python app.py
 
   frontend:
-    build: ./templates
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
     ports:
       - "80:80"
+    volumes:
+      - ./static:/usr/share/nginx/html/static
+      - ./templates:/usr/share/nginx/html/templates
+      - ./index.html:/usr/share/nginx/html/html.html
+      - ./favicon.ico:/usr/share/nginx/html/favicon.ico
     depends_on:
       - web

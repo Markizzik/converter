@@ -1,0 +1,5 @@
+# Используем официальный образ Nginx
+FROM nginx:alpine
+
+# Копируем статические файлы и шаблоны
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
